@@ -1,0 +1,7 @@
+build/
+bin/
+msg_gen/*
+*~
+.directory
+.svn/*
+

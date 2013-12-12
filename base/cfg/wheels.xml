@@ -1,0 +1,32 @@
+<configuration>
+  <left>
+    <ID>106</ID>
+    <!--mxlmode comment="POSITION_MODE">0</mxlmode-->
+    <mxlmode comment="SPEED_MODE">1</mxlmode>
+    <gearboxratiomotor>46.7</gearboxratiomotor>
+    <acceleration>2.826</acceleration>
+    <pposition>0.1</pposition>
+    <iposition>0.0</iposition>
+    <dposition>0.0</dposition>
+    <ilposition>5.0</ilposition>
+    <pspeed>0.1</pspeed>
+    <ispeed>0.0</ispeed>
+    <dspeed>0.0</dspeed>
+    <ilspeed>5.0</ilspeed>
+  </left>
+  <right>
+    <ID>107</ID>
+    <!--mxlmode comment="POSITION_MODE">0</mxlmode-->
+    <mxlmode comment="SPEED_MODE">1</mxlmode>
+    <gearboxratiomotor>46.7</gearboxratiomotor>
+    <acceleration>2.826</acceleration>
+    <pposition>0.1</pposition>
+    <iposition>0.0</iposition>
+    <dposition>0.0</dposition>
+    <ilposition>5.0</ilposition>
+    <pspeed>0.1</pspeed>
+    <ispeed>0.0</ispeed>
+    <dspeed>0.0</dspeed>
+    <ilspeed>5.0</ilspeed>
+  </right>
+</configuration>

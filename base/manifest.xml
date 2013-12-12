@@ -1,0 +1,14 @@
+<package>
+  <description brief="base">
+	basic base class.
+  </description>
+  <author>Floris Gaisser</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/base</url>
+  <depend package="roscpp"/>
+  <depend package="threemxl"/>
+  <depend package="ps3joy" />
+</package>
+
+

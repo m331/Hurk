@@ -1,0 +1,19 @@
+<package>
+  <description brief="hurk">
+
+     hurk
+
+  </description>
+  <author>Jens, Fons</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/hurk</url>
+  <depend package="sensor_msgs"/>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="threemxl"/> 
+  
+</package>
+
+

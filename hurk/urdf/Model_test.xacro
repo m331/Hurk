@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hurk">
+
+
+<!-- **************************
+          XACRO PROPERTIES
+     ************************** -->
+<xacro:property name="pi" value="3.14159265359"/><!-- width of body -->
+<xacro:property name="body_width" value=".29"/><!-- width of body -->
+<xacro:property name="cylinders_extra_width" value=".02"/><!-- width of body -->
+<xacro:property name="base_block_size_x" value=".35" /><!-- base size (x dir) -->
+<xacro:property name="base_block_size_y" value=".45" /><!-- base size (y dir) -->
+<xacro:property name="base_block_size_z" value=".10" /><!-- base size (z dir) -->
+<xacro:property name="knee_and_hip_cyl_rad" value=".10" /><!-- knee and hip cylinder radius -->
+<xacro:property name="knee_distfromfront" value="-.12" /><!-- position of knee from 0 (y dir) -->
+<xacro:property name="upper_leg_length" value=".4" /><!-- upper leg length -->
+<xacro:property name="body_length" value=".45" /><!-- body length -->
+<xacro:property name="shoulder_cyl_rad" value=".15" /><!-- shoulder cylinder radius -->
+            <cylinder length="${arm_width}" radius="${arm_shoulder_elbow_disks_rad}"/>
+<xacro:property name="arm_width" value=".1" /><!-- arm width -->
+<xacro:property name="arm_shoulder_elbow_disks_rad" value=".05" /><!-- arm shoulder elbow joint disks radius -->
+<xacro:property name="arm_shoulder_extra_dist" value=".02" /><!-- arm shoulder separation distance -->
+
+
+<!-- COMMENTED OUT
+<xacro:property name="finger1_xyz" value="0 0 1" />
+<xacro:property name="joint1_xyz" value="-1 .5 1.5" />
+
+<xacro:property name="finger2_xyz" value="0 0 1" />
+<xacro:property name="joint2_xyz" value="-1 .5 -1.5" />
+
+<xacro:property name="thumb_xyz" value="0 0 1" />
+<xacro:property name="joint3_xyz" value="1 .5 0" />
+
+<xacro:property name="pi" value="3.14" />
+     END COMMENTED OUT -->
+
+
+
+<!-- *******************************
+          ROBOT DEFINITION: BODY
+     ******************************* -->
+
+<link name="base_link">
+ <visual>
+   <origin xyz="0 ${-.5*base_block_size_y} ${-.5*base_block_size_z}" rpy="0 0 0"/>
+          <geometry>
+            <box size="${base_block_size_x} ${base_block_size_y} ${base_block_size_z}"/>
+          </geometry>
+          <material name="red">
+            <color rgba=".8 0 0 1"/>
+          </material>
+ </visual>
+</link>
+
+<link name="knee_cylinder">
+ <visual>
+   <origin xyz="0 0 0" rpy="0 ${.5*pi} 0"/>
+          <geometry>
+            <cylinder length="${body_width+cylinders_extra_width}" radius="${knee_and_hip_cyl_rad}"/>
+          </geometry>
+          <material name="blue">
+            <color rgba="0 0 .8 1"/>
+          </material>
+ </visual>
+</link>
+
+<link name="upper_leg">
+ <visual>
+   <origin xyz="0 0 ${.5*upper_leg_length}" rpy="0 0 0"/>
+          <geometry>
+            <box size="${body_width} ${knee_and_hip_cyl_rad} ${upper_leg_length}"/>
+          </geometry>
+          <cylinder length="${arm_width}" radius="${arm_shoulder_elbow_disks_rad}"/>
+ </visual>
+</link>
+
+<link name="hip_cylinder">
+ <visual>
+   <origin xyz="0 0 0" rpy="0 ${.5*pi} 0"/>
+          <geometry>
+            <cylinder length="${body_width+cylinders_extra_width}" radius="${knee_and_hip_cyl_rad}"/>
+          </geometry>
+          <material name="blue">
+            <color rgba="0 0 .8 1"/>
+          </material>
+ </visual>
+</link>
+
+<link name="body">
+ <visual>
+   <origin xyz="0 0 ${.5*body_length}" rpy="0 0 0"/>
+          <geometry>
+            <box size="${body_width} ${knee_and_hip_cyl_rad} ${body_length}"/>
+          </geometry>
+          <material name="green">
+            <color rgba="0 .8 0 1"/>
+          </material>
+ </visual>
+</link>
+
+<link name="shoulder_cylinder">
+ <visual>
+   <origin xyz="0 0 0" rpy="0 ${.5*pi} 0"/>
+          <geometry>
+            <cylinder length="${body_width+cylinders_extra_width}" radius="${shoulder_cyl_rad}"/>
+          </geometry>
+          <material name="green"/>
+ </visual>
+</link>
+
+<!-- *******************************
+          ROBOT DEFINITION: ARM
+     ******************************* -->
+
+<link name="shoulder_joint_disk">
+ <visual>
+   <origin xyz="0 0 0" rpy="0 ${.5*pi} 0"/>
+          <geometry>
+            <cylinder length="${arm_width}" radius="${arm_shoulder_elbow_disks_rad}"/>
+          </geometry>
+          <material name="blue">
+            <color rgba=".8 0 0 1"/>
+          </material>
+ </visual>
+</link>
+
+<!-- COMMENTED OUT
+<link name="finger2">
+ <visual>
+   <origin xyz="${finger2_xyz}" rpy="0 0 0"/>
+          <geometry>
+            <cylinder length="${phalanx_1_l}" radius="${phalanx_1_r}"/>
+          </geometry>
+          <material name="blue"/>
+ </visual>
+</link>
+
+<link name="thumb">
+ <visual>
+   <origin xyz="${thumb_xyz}" rpy="0 0 0"/>
+          <geometry>
+            <cylinder length="${phalanx_1_l}" radius="${phalanx_1_r}"/>
+          </geometry>
+          <material name="blue"/>
+ </visual>
+</link>
+      END COMMENTED OUT -->
+
+
+
+<!-- **************************
+           JOINTS: BODY 
+     ************************** -->
+
+<!-- Knee joint, connects base platform with upper leg -->
+  <joint name="knee" type="revolute">
+    <!-- Limits specified here -->
+    <limit effort="1000.0" velocity="0.5" lower="${30/180*pi}" upper="${73/180*pi}" />
+    <parent link="base_link"/>
+    <child link="upper_leg"/>
+    <origin xyz="0 ${knee_distfromfront} 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- Fixed joint to keep the knee cylinder in place -->
+  <joint name="knee_cyl_fix" type="fixed">
+    <parent link="base_link"/>
+    <child link="knee_cylinder"/>
+    <origin xyz="0 ${knee_distfromfront} 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- Fixed joint to keep the hip cylinder in place -->
+  <joint name="hip_cyl_fix" type="fixed">
+    <parent link="upper_leg"/>
+    <child link="hip_cylinder"/>
+    <origin xyz="0 0 ${upper_leg_length}" rpy="0 0 0"/>
+  </joint>
+
+<!-- Hip joint, connects body with upper leg -->
+  <joint name="hip" type="revolute">
+    <!-- Limits specified here -->
+    <limit effort="1000.0" velocity="0.5" lower="${-150/180*pi}" upper="${-35/180*pi}" />
+    <parent link="upper_leg"/>
+    <child link="body"/>
+    <origin xyz="0 0 ${upper_leg_length}" rpy="0 0 0"/>
+  </joint>
+
+<!-- Fixed joint to keep the shoulder cylinder in place -->
+  <joint name="shoulder_cyl_fix" type="fixed">
+    <parent link="body"/>
+    <child link="shoulder_cylinder"/>
+    <origin xyz="0 0 ${body_length}" rpy="0 0 0"/>
+  </joint>
+
+
+<!-- **************************
+           JOINTS: ARM 
+     ************************** -->
+
+<!-- Fixed joint to keep the shoulder joint disk in place -->
+  <joint name="shoulder_joint_disk_fix" type="continuous">
+    <parent link="body"/>
+    <child link="shoulder_joint_disk"/>
+    <origin xyz="${.5*(body_width+cylinders_extra_width+arm_width) + arm_shoulder_extra_dist}  0  ${body_length}" rpy="0 0 0"/>
+  </joint>
+
+
+
+<!-- COMMENTED OUT
+  <joint name="joint3" type="continuous">
+    <parent link="base_link"/>
+    <child link="thumb"/>
+    <origin xyz="${joint3_xyz}" rpy="0 ${pi/2} ${pi/2}"/>
+  </joint>
+      END COMMENTED OUT -->
+
+
+</robot>
