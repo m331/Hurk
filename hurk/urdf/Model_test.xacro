@@ -20,6 +20,9 @@
 <xacro:property name="arm_width" value=".1" /><!-- arm width -->
 <xacro:property name="arm_shoulder_elbow_disks_rad" value=".05" /><!-- arm shoulder elbow joint disks radius -->
 <xacro:property name="arm_shoulder_extra_dist" value=".02" /><!-- arm shoulder separation distance -->
+<xacro:property name="upper_arm_length" value=".4" /><!-- upper arm length from joint axis to joint axis -->
+<xacro:property name="lower_arm_length" value=".3" /><!-- lower arm length from joint axis to joint axis -->
+<xacro:property name="wrist_disk_rad" value=".015" /><!-- wrist joint disk radius -->
 
 
 <!-- COMMENTED OUT
@@ -125,29 +128,45 @@
  </visual>
 </link>
 
-<!-- COMMENTED OUT
-<link name="finger2">
+<link name="upper_arm">
  <visual>
-   <origin xyz="${finger2_xyz}" rpy="0 0 0"/>
+   <origin xyz="0 0 -${.5*upper_arm_length}" rpy="0 0 0"/>
           <geometry>
-            <cylinder length="${phalanx_1_l}" radius="${phalanx_1_r}"/>
+            <box size="${arm_width} ${arm_shoulder_elbow_disks_rad} ${upper_arm_length}"/>
           </geometry>
           <material name="blue"/>
  </visual>
 </link>
 
-<link name="thumb">
+<link name="elbow_joint_disk">
  <visual>
-   <origin xyz="${thumb_xyz}" rpy="0 0 0"/>
+   <origin xyz="0 0 0" rpy="0 ${.5*pi} 0"/>
           <geometry>
-            <cylinder length="${phalanx_1_l}" radius="${phalanx_1_r}"/>
+            <cylinder length="${arm_width}" radius="${arm_shoulder_elbow_disks_rad}"/>
           </geometry>
           <material name="blue"/>
  </visual>
 </link>
-      END COMMENTED OUT -->
 
+<link name="lower_arm">
+ <visual>
+   <origin xyz="0 0 -${.5*lower_arm_length}" rpy="0 0 0"/>
+          <geometry>
+            <box size="${arm_width} ${2*wrist_disk_rad} ${lower_arm_length}"/>
+          </geometry>
+          <material name="blue"/>
+ </visual>
+</link>
 
+<link name="wrist_joint_disk">
+ <visual>
+   <origin xyz="0 0 0" rpy="0 ${.5*pi} 0"/>
+          <geometry>
+            <cylinder length="${arm_width}" radius="${wrist_disk_rad}"/>
+          </geometry>
+          <material name="blue"/>
+ </visual>
+</link>
 
 <!-- **************************
            JOINTS: BODY 
@@ -197,14 +216,40 @@
            JOINTS: ARM 
      ************************** -->
 
-<!-- Fixed joint to keep the shoulder joint disk in place -->
-  <joint name="shoulder_joint_disk_fix" type="continuous">
+<!-- Joint for shoulder joint disk -->
+  <joint name="shoulder_joint_disk" type="continuous">
     <parent link="body"/>
     <child link="shoulder_joint_disk"/>
     <origin xyz="${.5*(body_width+cylinders_extra_width+arm_width) + arm_shoulder_extra_dist}  0  ${body_length}" rpy="0 0 0"/>
   </joint>
 
+<!-- Joint for fixing upper arm to shoulder joint disk -->
+  <joint name="upper_arm_fix" type="fixed">
+    <parent link="shoulder_joint_disk"/>
+    <child link="upper_arm"/>
+    <origin xyz="0  0  0" rpy="0 0 0"/>
+  </joint>
 
+<!-- Joint for elbow joint disk -->
+  <joint name="elbow_joint_disk" type="continuous">
+    <parent link="upper_arm"/>
+    <child link="elbow_joint_disk"/>
+    <origin xyz="0  0 -${upper_arm_length}" rpy="0 0 0"/>
+  </joint>
+
+<!-- Joint for fixing lower arm to shoulder joint disk -->
+  <joint name="lower_arm_fix" type="fixed">
+    <parent link="elbow_joint_disk"/>
+    <child link="lower_arm"/>
+    <origin xyz="0  0  0" rpy="0 0 0"/>
+  </joint>
+
+<!-- Joint for wrist joint disk -->
+  <joint name="wrist_joint_disk" type="continuous">
+    <parent link="lower_arm"/>
+    <child link="wrist_joint_disk"/>
+    <origin xyz="0  0 -${lower_arm_length}" rpy="0 0 0"/>
+  </joint>
 
 <!-- COMMENTED OUT
   <joint name="joint3" type="continuous">
@@ -214,5 +259,147 @@
   </joint>
       END COMMENTED OUT -->
 
+<!-- **************************
+      LINKS AND JOINTS: HAND
+     ************************** -->
+<!-- NOTE: Orientation of hand is, initially, horizontal. That's how it's defined. -->
+<xacro:property name="hand_height" value=".06" /><!-- hand height -->
+<xacro:property name="hand_base_link_width" value=".02" /><!-- hand base link block width (x-axis) -->
+<xacro:property name="hand_base_link_length" value=".03" /><!-- hand base link block length (y-axis) -->
+<xacro:property name="first_phalanx_length" value=".05" /><!-- length of first phalanx of finger -->
+<xacro:property name="second_phalanx_length" value=".04" /><!-- length of second phalanx of finger -->
+<xacro:property name="finger_width" value=".005" /><!-- finger width (thickness in x-direction) -->
+<xacro:property name="finger_height" value=".01" /><!-- finger height (thickness in y-direction) -->
+<xacro:property name="finger_spacing" value=".04" /><!-- Spacing between finger 1 and 2 -->
+
+<!-- BASE LINK -->
+<link name="base_link_hand">
+ <visual>
+   <origin xyz="0 ${.5*hand_base_link_length} 0" rpy="0 0 0"/>
+          <geometry>
+            <box size="${hand_base_link_width} ${hand_base_link_length} ${hand_height}"/>
+          </geometry>
+          <material name="orange">
+            <color rgba="1 0.65 0 1"/>
+          </material>
+ </visual>
+</link><!---->
+
+<!-- Joint for fixing base_link_hand to wrist disk -->
+  <joint name="wrist_fix" type="fixed">
+    <parent link="wrist_joint_disk"/>
+    <child link="base_link_hand"/>
+    <origin xyz="0  0  0" rpy="0 0 0"/>
+  </joint><!---->
+
+<!-- FINGER 1 (same as FINGER 2) -->
+  <link name="phalanx_1_1">
+   <visual>
+     <origin xyz="0 ${.5*first_phalanx_length} 0" rpy="0 -${.5*pi} 0"/>
+            <geometry>
+              <box size="${finger_width} ${first_phalanx_length} ${finger_height}"/>
+            </geometry>
+          <material name="orange"/>
+   </visual>
+  </link>
+
+<!-- Joint for phalanx_1_1 -->
+  <joint name="finger1_phalanx1" type="continuous">
+    <parent link="base_link_hand"/>
+    <child link="phalanx_1_1"/>
+    <origin xyz="${.5*hand_base_link_width}  ${hand_base_link_length} ${.5*finger_spacing}" rpy="0 ${.5*pi} 0"/>
+  </joint>
+
+<!-- Finger 1 phalanx 2 -->
+  <link name="phalanx_1_2">
+   <visual>
+     <origin xyz="0 ${.5*second_phalanx_length} 0" rpy="0 ${.5*pi} 0"/>
+            <geometry>
+              <box size="${finger_width} ${second_phalanx_length} ${finger_height}"/>
+            </geometry>
+          <material name="orange"/>
+   </visual>
+  </link>
+
+<!-- Joint for phalanx_1_2 -->
+  <joint name="finger1_phalanx2" type="continuous">
+    <parent link="phalanx_1_1"/>
+    <child link="phalanx_1_2"/>
+    <origin xyz="0  ${first_phalanx_length} 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- FINGER 2 (same as FINGER 1) -->
+  <link name="phalanx_2_1">
+   <visual>
+     <origin xyz="0 ${.5*first_phalanx_length} 0" rpy="0 -${.5*pi} 0"/>
+            <geometry>
+              <box size="${finger_width} ${first_phalanx_length} ${finger_height}"/>
+            </geometry>
+          <material name="orange"/>
+   </visual>
+  </link>
+
+<!-- Joint for phalanx_2_1, NOTE: IT IS FIXED TO phalanx_1_1 -->
+  <joint name="finger2_phalanx1" type="fixed">
+    <parent link="phalanx_1_1"/>
+    <child link="phalanx_2_1"/>
+    <origin xyz="${finger_spacing} 0 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- Finger 2 phalanx 2 -->
+  <link name="phalanx_2_2">
+   <visual>
+     <origin xyz="0 ${.5*second_phalanx_length} 0" rpy="0 ${.5*pi} 0"/>
+            <geometry>
+              <box size="${finger_width} ${second_phalanx_length} ${finger_height}"/>
+            </geometry>
+          <material name="orange"/>
+   </visual>
+  </link>
+
+<!-- Joint for phalanx_1_2, NOTE: IT IS FIXED TO phalanx_1_2 -->
+  <joint name="finger2_phalanx2" type="fixed">
+    <parent link="phalanx_1_2"/>
+    <child link="phalanx_2_2"/>
+    <origin xyz="${finger_spacing} 0 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- FINGER 3 -->
+  <link name="phalanx_3_1">
+   <visual>
+     <origin xyz="0 ${.5*first_phalanx_length} 0" rpy="0 -${.5*pi} 0"/>
+            <geometry>
+              <box size="${finger_width} ${first_phalanx_length} ${finger_height}"/>
+            </geometry>
+          <material name="orange"/>
+   </visual>
+  </link>
+
+<!-- Joint for phalanx_3_1 -->
+  <joint name="finger3_phalanx1" type="continuous">
+    <parent link="base_link_hand"/>
+    <child link="phalanx_3_1"/>
+    <origin xyz="-${.5*hand_base_link_width}  ${hand_base_link_length} 0" rpy="0 -${.5*pi} 0"/>
+  </joint>
+
+<!-- Finger 3 phalanx 2 -->
+  <link name="phalanx_3_2">
+   <visual>
+     <origin xyz="0 ${.5*second_phalanx_length} 0" rpy="0 -${.5*pi} 0"/>
+            <geometry>
+              <box size="${finger_width} ${second_phalanx_length} ${finger_height}"/>
+            </geometry>
+          <material name="orange"/>
+   </visual>
+  </link>
+
+<!-- Joint for phalanx_3_2 -->
+  <joint name="finger3_phalanx2" type="continuous">
+    <parent link="phalanx_3_1"/>
+    <child link="phalanx_3_2"/>
+    <origin xyz="0  ${first_phalanx_length} 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- roslaunch urdf_tutorial xacrodisplay.launch model:=Model_test.xacro gui:=True -->
 
 </robot>
