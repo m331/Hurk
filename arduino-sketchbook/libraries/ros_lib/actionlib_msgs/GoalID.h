@@ -29,11 +29,11 @@ namespace actionlib_msgs
       *(outbuffer + offset + 2) = (this->stamp.nsec >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (this->stamp.nsec >> (8 * 3)) & 0xFF;
       offset += sizeof(this->stamp.nsec);
-      uint32_t * length_id = (uint32_t *)(outbuffer + offset);
-      *length_id = strlen( (const char*) this->id);
+      uint32_t length_id = strlen( (const char*) this->id);
+      memcpy(outbuffer + offset, &length_id, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->id, *length_id);
-      offset += *length_id;
+      memcpy(outbuffer + offset, this->id, length_id);
+      offset += length_id;
       return offset;
     }
 
@@ -50,7 +50,8 @@ namespace actionlib_msgs
       this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
       this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       offset += sizeof(this->stamp.nsec);
-      uint32_t length_id = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_id;
+      memcpy(&length_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_id; ++k){
           inbuffer[k-1]=inbuffer[k];

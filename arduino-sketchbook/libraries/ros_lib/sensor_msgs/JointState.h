@@ -36,18 +36,18 @@ namespace sensor_msgs
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
       for( uint8_t i = 0; i < name_length; i++){
-      uint32_t * length_namei = (uint32_t *)(outbuffer + offset);
-      *length_namei = strlen( (const char*) this->name[i]);
+      uint32_t length_namei = strlen( (const char*) this->name[i]);
+      memcpy(outbuffer + offset, &length_namei, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->name[i], *length_namei);
-      offset += *length_namei;
+      memcpy(outbuffer + offset, this->name[i], length_namei);
+      offset += length_namei;
       }
       *(outbuffer + offset++) = position_length;
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
       for( uint8_t i = 0; i < position_length; i++){
-      int32_t * val_positioni = (long *) &(this->position[i]);
+      int32_t * val_positioni = (int32_t *) &(this->position[i]);
       int32_t exp_positioni = (((*val_positioni)>>23)&255);
       if(exp_positioni != 0)
         exp_positioni += 1023-127;
@@ -67,7 +67,7 @@ namespace sensor_msgs
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
       for( uint8_t i = 0; i < velocity_length; i++){
-      int32_t * val_velocityi = (long *) &(this->velocity[i]);
+      int32_t * val_velocityi = (int32_t *) &(this->velocity[i]);
       int32_t exp_velocityi = (((*val_velocityi)>>23)&255);
       if(exp_velocityi != 0)
         exp_velocityi += 1023-127;
@@ -87,7 +87,7 @@ namespace sensor_msgs
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
       for( uint8_t i = 0; i < effort_length; i++){
-      int32_t * val_efforti = (long *) &(this->effort[i]);
+      int32_t * val_efforti = (int32_t *) &(this->effort[i]);
       int32_t exp_efforti = (((*val_efforti)>>23)&255);
       if(exp_efforti != 0)
         exp_efforti += 1023-127;
@@ -115,7 +115,8 @@ namespace sensor_msgs
       offset += 3;
       name_length = name_lengthT;
       for( uint8_t i = 0; i < name_length; i++){
-      uint32_t length_st_name = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_st_name;
+      memcpy(&length_st_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_name; ++k){
           inbuffer[k-1]=inbuffer[k];

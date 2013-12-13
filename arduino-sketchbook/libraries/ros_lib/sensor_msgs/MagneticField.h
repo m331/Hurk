@@ -25,7 +25,7 @@ namespace sensor_msgs
       offset += this->magnetic_field.serialize(outbuffer + offset);
       unsigned char * magnetic_field_covariance_val = (unsigned char *) this->magnetic_field_covariance;
       for( uint8_t i = 0; i < 9; i++){
-      int32_t * val_magnetic_field_covariancei = (long *) &(this->magnetic_field_covariance[i]);
+      int32_t * val_magnetic_field_covariancei = (int32_t *) &(this->magnetic_field_covariance[i]);
       int32_t exp_magnetic_field_covariancei = (((*val_magnetic_field_covariancei)>>23)&255);
       if(exp_magnetic_field_covariancei != 0)
         exp_magnetic_field_covariancei += 1023-127;

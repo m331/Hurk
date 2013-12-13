@@ -18,23 +18,24 @@ namespace diagnostic_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_key = (uint32_t *)(outbuffer + offset);
-      *length_key = strlen( (const char*) this->key);
+      uint32_t length_key = strlen( (const char*) this->key);
+      memcpy(outbuffer + offset, &length_key, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->key, *length_key);
-      offset += *length_key;
-      uint32_t * length_value = (uint32_t *)(outbuffer + offset);
-      *length_value = strlen( (const char*) this->value);
+      memcpy(outbuffer + offset, this->key, length_key);
+      offset += length_key;
+      uint32_t length_value = strlen( (const char*) this->value);
+      memcpy(outbuffer + offset, &length_value, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->value, *length_value);
-      offset += *length_value;
+      memcpy(outbuffer + offset, this->value, length_value);
+      offset += length_value;
       return offset;
     }
 
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_key = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_key;
+      memcpy(&length_key, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_key; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -42,7 +43,8 @@ namespace diagnostic_msgs
       inbuffer[offset+length_key-1]=0;
       this->key = (char *)(inbuffer + offset-1);
       offset += length_key;
-      uint32_t length_value = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_value;
+      memcpy(&length_value, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_value; ++k){
           inbuffer[k-1]=inbuffer[k];

@@ -39,18 +39,19 @@ static const char FRAMEGRAPH[] = "tf/FrameGraph";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_dot_graph = (uint32_t *)(outbuffer + offset);
-      *length_dot_graph = strlen( (const char*) this->dot_graph);
+      uint32_t length_dot_graph = strlen( (const char*) this->dot_graph);
+      memcpy(outbuffer + offset, &length_dot_graph, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->dot_graph, *length_dot_graph);
-      offset += *length_dot_graph;
+      memcpy(outbuffer + offset, this->dot_graph, length_dot_graph);
+      offset += length_dot_graph;
       return offset;
     }
 
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_dot_graph = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_dot_graph;
+      memcpy(&length_dot_graph, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_dot_graph; ++k){
           inbuffer[k-1]=inbuffer[k];

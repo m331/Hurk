@@ -33,11 +33,11 @@ namespace actionlib_msgs
       offset += this->goal_id.serialize(outbuffer + offset);
       *(outbuffer + offset + 0) = (this->status >> (8 * 0)) & 0xFF;
       offset += sizeof(this->status);
-      uint32_t * length_text = (uint32_t *)(outbuffer + offset);
-      *length_text = strlen( (const char*) this->text);
+      uint32_t length_text = strlen( (const char*) this->text);
+      memcpy(outbuffer + offset, &length_text, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->text, *length_text);
-      offset += *length_text;
+      memcpy(outbuffer + offset, this->text, length_text);
+      offset += length_text;
       return offset;
     }
 
@@ -47,7 +47,8 @@ namespace actionlib_msgs
       offset += this->goal_id.deserialize(inbuffer + offset);
       this->status =  ((uint8_t) (*(inbuffer + offset)));
       offset += sizeof(this->status);
-      uint32_t length_text = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_text;
+      memcpy(&length_text, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_text; ++k){
           inbuffer[k-1]=inbuffer[k];

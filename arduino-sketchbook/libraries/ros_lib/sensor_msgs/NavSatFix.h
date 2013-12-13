@@ -31,7 +31,7 @@ namespace sensor_msgs
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
       offset += this->status.serialize(outbuffer + offset);
-      int32_t * val_latitude = (long *) &(this->latitude);
+      int32_t * val_latitude = (int32_t *) &(this->latitude);
       int32_t exp_latitude = (((*val_latitude)>>23)&255);
       if(exp_latitude != 0)
         exp_latitude += 1023-127;
@@ -45,7 +45,7 @@ namespace sensor_msgs
       *(outbuffer + offset++) = ((exp_latitude<<4) & 0xF0) | ((sig_latitude>>19)&0x0F);
       *(outbuffer + offset++) = (exp_latitude>>4) & 0x7F;
       if(this->latitude < 0) *(outbuffer + offset -1) |= 0x80;
-      int32_t * val_longitude = (long *) &(this->longitude);
+      int32_t * val_longitude = (int32_t *) &(this->longitude);
       int32_t exp_longitude = (((*val_longitude)>>23)&255);
       if(exp_longitude != 0)
         exp_longitude += 1023-127;
@@ -59,7 +59,7 @@ namespace sensor_msgs
       *(outbuffer + offset++) = ((exp_longitude<<4) & 0xF0) | ((sig_longitude>>19)&0x0F);
       *(outbuffer + offset++) = (exp_longitude>>4) & 0x7F;
       if(this->longitude < 0) *(outbuffer + offset -1) |= 0x80;
-      int32_t * val_altitude = (long *) &(this->altitude);
+      int32_t * val_altitude = (int32_t *) &(this->altitude);
       int32_t exp_altitude = (((*val_altitude)>>23)&255);
       if(exp_altitude != 0)
         exp_altitude += 1023-127;
@@ -75,7 +75,7 @@ namespace sensor_msgs
       if(this->altitude < 0) *(outbuffer + offset -1) |= 0x80;
       unsigned char * position_covariance_val = (unsigned char *) this->position_covariance;
       for( uint8_t i = 0; i < 9; i++){
-      int32_t * val_position_covariancei = (long *) &(this->position_covariance[i]);
+      int32_t * val_position_covariancei = (int32_t *) &(this->position_covariance[i]);
       int32_t exp_position_covariancei = (((*val_position_covariancei)>>23)&255);
       if(exp_position_covariancei != 0)
         exp_position_covariancei += 1023-127;
