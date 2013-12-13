@@ -20,11 +20,11 @@ namespace sensor_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_name = (uint32_t *)(outbuffer + offset);
-      *length_name = strlen( (const char*) this->name);
+      uint32_t length_name = strlen( (const char*) this->name);
+      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->name, *length_name);
-      offset += *length_name;
+      memcpy(outbuffer + offset, this->name, length_name);
+      offset += length_name;
       *(outbuffer + offset++) = values_length;
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
@@ -47,7 +47,8 @@ namespace sensor_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_name = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_name;
+      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];

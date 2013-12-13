@@ -51,11 +51,11 @@ static const char SETCAMERAINFO[] = "sensor_msgs/SetCameraInfo";
       u_success.real = this->success;
       *(outbuffer + offset + 0) = (u_success.base >> (8 * 0)) & 0xFF;
       offset += sizeof(this->success);
-      uint32_t * length_status_message = (uint32_t *)(outbuffer + offset);
-      *length_status_message = strlen( (const char*) this->status_message);
+      uint32_t length_status_message = strlen( (const char*) this->status_message);
+      memcpy(outbuffer + offset, &length_status_message, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->status_message, *length_status_message);
-      offset += *length_status_message;
+      memcpy(outbuffer + offset, this->status_message, length_status_message);
+      offset += length_status_message;
       return offset;
     }
 
@@ -70,7 +70,8 @@ static const char SETCAMERAINFO[] = "sensor_msgs/SetCameraInfo";
       u_success.base |= ((uint8_t) (*(inbuffer + offset + 0))) << (8 * 0);
       this->success = u_success.real;
       offset += sizeof(this->success);
-      uint32_t length_status_message = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_status_message;
+      memcpy(&length_status_message, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_status_message; ++k){
           inbuffer[k-1]=inbuffer[k];

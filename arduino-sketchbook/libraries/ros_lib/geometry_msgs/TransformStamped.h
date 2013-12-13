@@ -22,11 +22,11 @@ namespace geometry_msgs
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      uint32_t * length_child_frame_id = (uint32_t *)(outbuffer + offset);
-      *length_child_frame_id = strlen( (const char*) this->child_frame_id);
+      uint32_t length_child_frame_id = strlen( (const char*) this->child_frame_id);
+      memcpy(outbuffer + offset, &length_child_frame_id, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->child_frame_id, *length_child_frame_id);
-      offset += *length_child_frame_id;
+      memcpy(outbuffer + offset, this->child_frame_id, length_child_frame_id);
+      offset += length_child_frame_id;
       offset += this->transform.serialize(outbuffer + offset);
       return offset;
     }
@@ -35,7 +35,8 @@ namespace geometry_msgs
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t length_child_frame_id = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_child_frame_id;
+      memcpy(&length_child_frame_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_child_frame_id; ++k){
           inbuffer[k-1]=inbuffer[k];

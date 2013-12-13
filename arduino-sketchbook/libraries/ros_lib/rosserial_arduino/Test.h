@@ -18,18 +18,19 @@ static const char TEST[] = "rosserial_arduino/Test";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_input = (uint32_t *)(outbuffer + offset);
-      *length_input = strlen( (const char*) this->input);
+      uint32_t length_input = strlen( (const char*) this->input);
+      memcpy(outbuffer + offset, &length_input, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->input, *length_input);
-      offset += *length_input;
+      memcpy(outbuffer + offset, this->input, length_input);
+      offset += length_input;
       return offset;
     }
 
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_input = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_input;
+      memcpy(&length_input, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_input; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -53,18 +54,19 @@ static const char TEST[] = "rosserial_arduino/Test";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_output = (uint32_t *)(outbuffer + offset);
-      *length_output = strlen( (const char*) this->output);
+      uint32_t length_output = strlen( (const char*) this->output);
+      memcpy(outbuffer + offset, &length_output, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->output, *length_output);
-      offset += *length_output;
+      memcpy(outbuffer + offset, this->output, length_output);
+      offset += length_output;
       return offset;
     }
 
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_output = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_output;
+      memcpy(&length_output, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_output; ++k){
           inbuffer[k-1]=inbuffer[k];

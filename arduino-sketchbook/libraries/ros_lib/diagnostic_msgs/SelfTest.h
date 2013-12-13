@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "ros/msg.h"
 #include "diagnostic_msgs/DiagnosticStatus.h"
-#include "diagnostic_msgs/byte.h"
 
 namespace diagnostic_msgs
 {
@@ -37,7 +36,7 @@ static const char SELFTEST[] = "diagnostic_msgs/SelfTest";
   {
     public:
       char * id;
-      diagnostic_msgs::byte passed;
+      int8_t passed;
       uint8_t status_length;
       diagnostic_msgs::DiagnosticStatus st_status;
       diagnostic_msgs::DiagnosticStatus * status;
@@ -45,12 +44,18 @@ static const char SELFTEST[] = "diagnostic_msgs/SelfTest";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_id = (uint32_t *)(outbuffer + offset);
-      *length_id = strlen( (const char*) this->id);
+      uint32_t length_id = strlen( (const char*) this->id);
+      memcpy(outbuffer + offset, &length_id, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->id, *length_id);
-      offset += *length_id;
-      offset += this->passed.serialize(outbuffer + offset);
+      memcpy(outbuffer + offset, this->id, length_id);
+      offset += length_id;
+      union {
+        int8_t real;
+        uint8_t base;
+      } u_passed;
+      u_passed.real = this->passed;
+      *(outbuffer + offset + 0) = (u_passed.base >> (8 * 0)) & 0xFF;
+      offset += sizeof(this->passed);
       *(outbuffer + offset++) = status_length;
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
@@ -64,7 +69,8 @@ static const char SELFTEST[] = "diagnostic_msgs/SelfTest";
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_id = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_id;
+      memcpy(&length_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_id; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -72,7 +78,14 @@ static const char SELFTEST[] = "diagnostic_msgs/SelfTest";
       inbuffer[offset+length_id-1]=0;
       this->id = (char *)(inbuffer + offset-1);
       offset += length_id;
-      offset += this->passed.deserialize(inbuffer + offset);
+      union {
+        int8_t real;
+        uint8_t base;
+      } u_passed;
+      u_passed.base = 0;
+      u_passed.base |= ((uint8_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      this->passed = u_passed.real;
+      offset += sizeof(this->passed);
       uint8_t status_lengthT = *(inbuffer + offset++);
       if(status_lengthT > status_length)
         this->status = (diagnostic_msgs::DiagnosticStatus*)realloc(this->status, status_lengthT * sizeof(diagnostic_msgs::DiagnosticStatus));
