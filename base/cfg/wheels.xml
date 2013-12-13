@@ -9,9 +9,9 @@
     <iposition>0.0</iposition>
     <dposition>0.0</dposition>
     <ilposition>5.0</ilposition>
-    <pspeed>0.1</pspeed>
+    <pspeed>0.3</pspeed>
     <ispeed>0.0</ispeed>
-    <dspeed>0.0</dspeed>
+    <dspeed>0.2</dspeed>
     <ilspeed>5.0</ilspeed>
   </left>
   <right>
@@ -24,9 +24,9 @@
     <iposition>0.0</iposition>
     <dposition>0.0</dposition>
     <ilposition>5.0</ilposition>
-    <pspeed>0.1</pspeed>
+    <pspeed>0.3</pspeed>
     <ispeed>0.0</ispeed>
-    <dspeed>0.0</dspeed>
+    <dspeed>0.2</dspeed>
     <ilspeed>5.0</ilspeed>
   </right>
 </configuration>
