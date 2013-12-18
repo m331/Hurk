@@ -8,6 +8,7 @@ rosmake base
 ```
 rosmake hurk
 ```
+<br />
 
 To run the base and the PS3 controller:
 ```
@@ -19,8 +20,7 @@ Then run in another terminal:
 ```
 rosrun base ps3_conv
 ```
-
-
+<br />
 
 To launch the Kinect & laserscan, run the following:
 ```
@@ -33,6 +33,7 @@ Then you can run:
 ```
 rosrun depthimage_to_laserscan depthimage_to_laserscan image:=/camera/depth_registered/image_raw
 ```
-
+<br />
 To run the sensors and the arduino:
+
 TO DO
