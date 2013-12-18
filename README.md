@@ -13,7 +13,6 @@ To run the base and the PS3 controller:
 ```
 sudo bash
 roslaunch hurk hurk.launch
-
 ```
 
 Then run in another terminal:
