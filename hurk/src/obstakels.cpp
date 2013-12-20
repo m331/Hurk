@@ -72,7 +72,14 @@ void Obstakels::laserCallback(const sensor_msgs::LaserScan::ConstPtr& laser)
   
   if (objr < stopdis) {
 	//er is een object te dichtbij, dus we gaan stilstaan en draaien totdat we weer kunnen rijden
-	vel.angular.z = -0.3; //rechtsaf draaien
+	if (vel.angular.z != 0.3 && vel.angular.z != -0.3) {
+		if (objth < 0) {
+			vel.angular.z = 0.3;
+		} else {
+			vel.angular.z = -0.3;
+		}
+	}
+
 	vel.linear.x = 0.0;
   } else {
 	if (objth < 0) {
