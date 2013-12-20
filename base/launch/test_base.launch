@@ -12,6 +12,6 @@
 		<param name="port_type" value="RS485_FTDI"/>
 		<param name="baud_rate" value="921600"/>
 	</node>
-	
+	<include file="$(find base)/launch/wheel_odometry.launch"/>
 	
 </launch>
