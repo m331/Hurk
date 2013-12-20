@@ -1,10 +1,3 @@
-/*
- * wheel_odometry.cpp
- *
- *  Created on: Dec 20, 2011
- *      Author: machielbruinink
- */
-
 #include <base/wheel_odometry.h>
 
 #define ONLY_WHEEL
