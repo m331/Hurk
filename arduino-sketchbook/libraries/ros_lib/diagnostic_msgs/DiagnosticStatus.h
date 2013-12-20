@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ros/msg.h"
-#include "diagnostic_msgs/byte.h"
 #include "diagnostic_msgs/KeyValue.h"
 
 namespace diagnostic_msgs
@@ -14,7 +13,7 @@ namespace diagnostic_msgs
   class DiagnosticStatus : public ros::Msg
   {
     public:
-      diagnostic_msgs::byte level;
+      int8_t level;
       char * name;
       char * message;
       char * hardware_id;
@@ -28,22 +27,28 @@ namespace diagnostic_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      offset += this->level.serialize(outbuffer + offset);
-      uint32_t * length_name = (uint32_t *)(outbuffer + offset);
-      *length_name = strlen( (const char*) this->name);
+      union {
+        int8_t real;
+        uint8_t base;
+      } u_level;
+      u_level.real = this->level;
+      *(outbuffer + offset + 0) = (u_level.base >> (8 * 0)) & 0xFF;
+      offset += sizeof(this->level);
+      uint32_t length_name = strlen( (const char*) this->name);
+      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->name, *length_name);
-      offset += *length_name;
-      uint32_t * length_message = (uint32_t *)(outbuffer + offset);
-      *length_message = strlen( (const char*) this->message);
+      memcpy(outbuffer + offset, this->name, length_name);
+      offset += length_name;
+      uint32_t length_message = strlen( (const char*) this->message);
+      memcpy(outbuffer + offset, &length_message, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->message, *length_message);
-      offset += *length_message;
-      uint32_t * length_hardware_id = (uint32_t *)(outbuffer + offset);
-      *length_hardware_id = strlen( (const char*) this->hardware_id);
+      memcpy(outbuffer + offset, this->message, length_message);
+      offset += length_message;
+      uint32_t length_hardware_id = strlen( (const char*) this->hardware_id);
+      memcpy(outbuffer + offset, &length_hardware_id, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->hardware_id, *length_hardware_id);
-      offset += *length_hardware_id;
+      memcpy(outbuffer + offset, this->hardware_id, length_hardware_id);
+      offset += length_hardware_id;
       *(outbuffer + offset++) = values_length;
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
@@ -57,8 +62,16 @@ namespace diagnostic_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      offset += this->level.deserialize(inbuffer + offset);
-      uint32_t length_name = *(uint32_t *)(inbuffer + offset);
+      union {
+        int8_t real;
+        uint8_t base;
+      } u_level;
+      u_level.base = 0;
+      u_level.base |= ((uint8_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      this->level = u_level.real;
+      offset += sizeof(this->level);
+      uint32_t length_name;
+      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -66,7 +79,8 @@ namespace diagnostic_msgs
       inbuffer[offset+length_name-1]=0;
       this->name = (char *)(inbuffer + offset-1);
       offset += length_name;
-      uint32_t length_message = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_message;
+      memcpy(&length_message, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_message; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -74,7 +88,8 @@ namespace diagnostic_msgs
       inbuffer[offset+length_message-1]=0;
       this->message = (char *)(inbuffer + offset-1);
       offset += length_message;
-      uint32_t length_hardware_id = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_hardware_id;
+      memcpy(&length_hardware_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_hardware_id; ++k){
           inbuffer[k-1]=inbuffer[k];

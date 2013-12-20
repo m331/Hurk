@@ -21,7 +21,7 @@ namespace sensor_msgs
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      int32_t * val_temperature = (long *) &(this->temperature);
+      int32_t * val_temperature = (int32_t *) &(this->temperature);
       int32_t exp_temperature = (((*val_temperature)>>23)&255);
       if(exp_temperature != 0)
         exp_temperature += 1023-127;
@@ -35,7 +35,7 @@ namespace sensor_msgs
       *(outbuffer + offset++) = ((exp_temperature<<4) & 0xF0) | ((sig_temperature>>19)&0x0F);
       *(outbuffer + offset++) = (exp_temperature>>4) & 0x7F;
       if(this->temperature < 0) *(outbuffer + offset -1) |= 0x80;
-      int32_t * val_variance = (long *) &(this->variance);
+      int32_t * val_variance = (int32_t *) &(this->variance);
       int32_t exp_variance = (((*val_variance)>>23)&255);
       if(exp_variance != 0)
         exp_variance += 1023-127;

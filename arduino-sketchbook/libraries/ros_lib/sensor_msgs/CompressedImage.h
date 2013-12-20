@@ -23,11 +23,11 @@ namespace sensor_msgs
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      uint32_t * length_format = (uint32_t *)(outbuffer + offset);
-      *length_format = strlen( (const char*) this->format);
+      uint32_t length_format = strlen( (const char*) this->format);
+      memcpy(outbuffer + offset, &length_format, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->format, *length_format);
-      offset += *length_format;
+      memcpy(outbuffer + offset, this->format, length_format);
+      offset += length_format;
       *(outbuffer + offset++) = data_length;
       *(outbuffer + offset++) = 0;
       *(outbuffer + offset++) = 0;
@@ -43,7 +43,8 @@ namespace sensor_msgs
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t length_format = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_format;
+      memcpy(&length_format, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_format; ++k){
           inbuffer[k-1]=inbuffer[k];

@@ -43,13 +43,27 @@
 #define SYNC_SECONDS        5
 
 #define MODE_FIRST_FF       0
-#define MODE_SECOND_FF      1
-#define MODE_TOPIC_L        2   // waiting for topic id
-#define MODE_TOPIC_H        3
-#define MODE_SIZE_L         4   // waiting for message size
-#define MODE_SIZE_H         5
-#define MODE_MESSAGE        6
-#define MODE_CHECKSUM       7
+/*
+ * The second sync byte is a protocol version. It's value is 0xff for the first
+ * version of the rosserial protocol (used up to hydro), 0xfe for the second version
+ * (introduced in hydro), 0xfd for the next, and so on. Its purpose is to enable
+ * detection of mismatched protocol versions (e.g. hydro rosserial_python with groovy
+ * rosserial_arduino. It must be changed in both this file and in
+ * rosserial_python/src/rosserial_python/SerialClient.py
+ */
+#define MODE_PROTOCOL_VER   1
+#define PROTOCOL_VER1		0xff // through groovy
+#define PROTOCOL_VER2		0xfe // in hydro
+#define PROTOCOL_VER 		PROTOCOL_VER2
+#define MODE_SIZE_L         2   
+#define MODE_SIZE_H         3
+#define MODE_SIZE_CHECKSUM  4   // checksum for msg size received from size L and H
+#define MODE_TOPIC_L        5   // waiting for topic id
+#define MODE_TOPIC_H        6
+#define MODE_MESSAGE        7
+#define MODE_MSG_CHECKSUM   8   // checksum for msg and topic id 
+
+
 
 #define MSG_TIMEOUT 20  //20 milliseconds to recieve all of message data
 
@@ -63,7 +77,6 @@ namespace ros {
       virtual int spinOnce()=0;
       virtual bool connected()=0;
     };
-
 }
 
 #include "publisher.h"
@@ -102,7 +115,27 @@ namespace ros {
        * Setup Functions
        */
     public:
-      NodeHandle_() : configured_(false) {}
+      NodeHandle_() : configured_(false) {
+
+        for(unsigned int i=0; i< MAX_PUBLISHERS; i++) 
+	   publishers[i] = 0;
+
+        for(unsigned int i=0; i< MAX_SUBSCRIBERS; i++) 
+	   subscribers[i] = 0;
+
+        for(unsigned int i=0; i< INPUT_SIZE; i++) 
+	   message_in[i] = 0;
+
+        for(unsigned int i=0; i< OUTPUT_SIZE; i++) 
+	   message_out[i] = 0;
+
+        req_param_resp.ints_length = 0;
+        req_param_resp.ints = NULL;
+        req_param_resp.floats_length = 0;
+        req_param_resp.floats = NULL;
+        req_param_resp.ints_length = 0;
+        req_param_resp.ints = NULL;
+      }
       
       Hardware* getHardware(){
         return &hardware_;
@@ -146,6 +179,7 @@ namespace ros {
        *  serial input and callbacks for subscribers.
        */
 
+
       virtual int spinOnce(){
 
         /* restart if timed out */
@@ -171,36 +205,44 @@ namespace ros {
           if( mode_ == MODE_MESSAGE ){        /* message data being recieved */
             message_in[index_++] = data;
             bytes_--;
-            if(bytes_ == 0)                   /* is message complete? if so, checksum */
-              mode_ = MODE_CHECKSUM;
+            if(bytes_ == 0)                  /* is message complete? if so, checksum */
+              mode_ = MODE_MSG_CHECKSUM;
           }else if( mode_ == MODE_FIRST_FF ){
             if(data == 0xff){
               mode_++;
               last_msg_timeout_time = c_time + MSG_TIMEOUT;
             }
-          }else if( mode_ == MODE_SECOND_FF ){
-            if(data == 0xff){
+          }else if( mode_ == MODE_PROTOCOL_VER ){
+            if(data == PROTOCOL_VER){
               mode_++;
             }else{
               mode_ = MODE_FIRST_FF;
+              if (configured_ == false)
+                  requestSyncTime(); 	/* send a msg back showing our protocol version */
             }
-          }else if( mode_ == MODE_TOPIC_L ){  /* bottom half of topic id */
-            topic_ = data;
-            mode_++;
-            checksum_ = data;                 /* first byte included in checksum */
-          }else if( mode_ == MODE_TOPIC_H ){  /* top half of topic id */
-            topic_ += data<<8;
-            mode_++;
-          }else if( mode_ == MODE_SIZE_L ){   /* bottom half of message size */
+	  }else if( mode_ == MODE_SIZE_L ){   /* bottom half of message size */
             bytes_ = data;
             index_ = 0;
             mode_++;
+            checksum_ = data;               /* first byte for calculating size checksum */
           }else if( mode_ == MODE_SIZE_H ){   /* top half of message size */
             bytes_ += data<<8;
+	    mode_++;
+          }else if( mode_ == MODE_SIZE_CHECKSUM ){  
+            if( (checksum_%256) == 255)
+	      mode_++;
+	    else 
+	      mode_ = MODE_FIRST_FF;          /* Abandon the frame if the msg len is wrong */
+	  }else if( mode_ == MODE_TOPIC_L ){  /* bottom half of topic id */
+            topic_ = data;
+            mode_++;
+            checksum_ = data;               /* first byte included in checksum */
+          }else if( mode_ == MODE_TOPIC_H ){  /* top half of topic id */
+            topic_ += data<<8;
             mode_ = MODE_MESSAGE;
             if(bytes_ == 0)
-              mode_ = MODE_CHECKSUM;
-          }else if( mode_ == MODE_CHECKSUM ){ /* do checksum */
+              mode_ = MODE_MSG_CHECKSUM;  
+          }else if( mode_ == MODE_MSG_CHECKSUM ){ /* do checksum */
             mode_ = MODE_FIRST_FF;
             if( (checksum_%256) == 255){
               if(topic_ == TopicInfo::ID_PUBLISHER){
@@ -230,6 +272,7 @@ namespace ros {
 
         return 0;
       }
+
 
       /* Are we connected to the PC? */
       virtual bool connected() {
@@ -369,24 +412,26 @@ namespace ros {
 
       virtual int publish(int id, const Msg * msg)
       {
-        if(id >= 100 && !configured_) return 0;
+        if(id >= 100 && !configured_) 
+	  return 0;
 
         /* serialize message */
-        int l = msg->serialize(message_out+6);
+        int l = msg->serialize(message_out+7);
 
         /* setup the header */
         message_out[0] = 0xff;
-        message_out[1] = 0xff;
-        message_out[2] = (unsigned char) id&255;
-        message_out[3] = (unsigned char) id>>8;
-        message_out[4] = (unsigned char) l&255;
-        message_out[5] = ((unsigned char) l>>8);
+        message_out[1] = PROTOCOL_VER;
+        message_out[2] = (unsigned char) l&255;
+        message_out[3] = (unsigned char) l>>8;
+	message_out[4] = 255 - ((message_out[2] + message_out[3])%256);
+        message_out[5] = (unsigned char) id&255;
+        message_out[6] = ((unsigned char) id>>8);
 
         /* calculate checksum */
         int chk = 0;
-        for(int i =2; i<l+6; i++)
+        for(int i =5; i<l+7; i++)
           chk += message_out[i];
-        l += 6;
+        l += 7;
         message_out[l++] = 255 - (chk%256);
 
         if( l <= OUTPUT_SIZE ){
@@ -394,6 +439,7 @@ namespace ros {
           return l;
         }else{
           logerror("Message from device dropped: message larger than buffer.");
+          return -1;
         }
       }
 
@@ -411,7 +457,7 @@ namespace ros {
 
     public:
       void logdebug(const char* msg){
-        log(rosserial_msgs::Log::DEBUG, msg);
+        log(rosserial_msgs::Log::ROSDEBUG, msg);
       }
       void loginfo(const char * msg){
         log(rosserial_msgs::Log::INFO, msg);
@@ -439,10 +485,10 @@ namespace ros {
         rosserial_msgs::RequestParamRequest req;
         req.name  = (char*)name;
         publish(TopicInfo::ID_PARAMETER_REQUEST, &req);
-        int end_time = hardware_.time();
+        unsigned int end_time = hardware_.time() + time_out;
         while(!param_recieved ){
           spinOnce();
-          if (end_time > hardware_.time()) return false;
+          if (hardware_.time() > end_time) return false;
         }
         return true;
       }

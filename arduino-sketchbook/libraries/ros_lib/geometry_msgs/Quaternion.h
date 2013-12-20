@@ -20,7 +20,7 @@ namespace geometry_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      int32_t * val_x = (long *) &(this->x);
+      int32_t * val_x = (int32_t *) &(this->x);
       int32_t exp_x = (((*val_x)>>23)&255);
       if(exp_x != 0)
         exp_x += 1023-127;
@@ -34,7 +34,7 @@ namespace geometry_msgs
       *(outbuffer + offset++) = ((exp_x<<4) & 0xF0) | ((sig_x>>19)&0x0F);
       *(outbuffer + offset++) = (exp_x>>4) & 0x7F;
       if(this->x < 0) *(outbuffer + offset -1) |= 0x80;
-      int32_t * val_y = (long *) &(this->y);
+      int32_t * val_y = (int32_t *) &(this->y);
       int32_t exp_y = (((*val_y)>>23)&255);
       if(exp_y != 0)
         exp_y += 1023-127;
@@ -48,7 +48,7 @@ namespace geometry_msgs
       *(outbuffer + offset++) = ((exp_y<<4) & 0xF0) | ((sig_y>>19)&0x0F);
       *(outbuffer + offset++) = (exp_y>>4) & 0x7F;
       if(this->y < 0) *(outbuffer + offset -1) |= 0x80;
-      int32_t * val_z = (long *) &(this->z);
+      int32_t * val_z = (int32_t *) &(this->z);
       int32_t exp_z = (((*val_z)>>23)&255);
       if(exp_z != 0)
         exp_z += 1023-127;
@@ -62,7 +62,7 @@ namespace geometry_msgs
       *(outbuffer + offset++) = ((exp_z<<4) & 0xF0) | ((sig_z>>19)&0x0F);
       *(outbuffer + offset++) = (exp_z>>4) & 0x7F;
       if(this->z < 0) *(outbuffer + offset -1) |= 0x80;
-      int32_t * val_w = (long *) &(this->w);
+      int32_t * val_w = (int32_t *) &(this->w);
       int32_t exp_w = (((*val_w)>>23)&255);
       if(exp_w != 0)
         exp_w += 1023-127;

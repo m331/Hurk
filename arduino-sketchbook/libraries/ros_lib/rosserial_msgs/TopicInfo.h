@@ -31,21 +31,21 @@ namespace rosserial_msgs
       *(outbuffer + offset + 0) = (this->topic_id >> (8 * 0)) & 0xFF;
       *(outbuffer + offset + 1) = (this->topic_id >> (8 * 1)) & 0xFF;
       offset += sizeof(this->topic_id);
-      uint32_t * length_topic_name = (uint32_t *)(outbuffer + offset);
-      *length_topic_name = strlen( (const char*) this->topic_name);
+      uint32_t length_topic_name = strlen( (const char*) this->topic_name);
+      memcpy(outbuffer + offset, &length_topic_name, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->topic_name, *length_topic_name);
-      offset += *length_topic_name;
-      uint32_t * length_message_type = (uint32_t *)(outbuffer + offset);
-      *length_message_type = strlen( (const char*) this->message_type);
+      memcpy(outbuffer + offset, this->topic_name, length_topic_name);
+      offset += length_topic_name;
+      uint32_t length_message_type = strlen( (const char*) this->message_type);
+      memcpy(outbuffer + offset, &length_message_type, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->message_type, *length_message_type);
-      offset += *length_message_type;
-      uint32_t * length_md5sum = (uint32_t *)(outbuffer + offset);
-      *length_md5sum = strlen( (const char*) this->md5sum);
+      memcpy(outbuffer + offset, this->message_type, length_message_type);
+      offset += length_message_type;
+      uint32_t length_md5sum = strlen( (const char*) this->md5sum);
+      memcpy(outbuffer + offset, &length_md5sum, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->md5sum, *length_md5sum);
-      offset += *length_md5sum;
+      memcpy(outbuffer + offset, this->md5sum, length_md5sum);
+      offset += length_md5sum;
       union {
         int32_t real;
         uint32_t base;
@@ -65,7 +65,8 @@ namespace rosserial_msgs
       this->topic_id =  ((uint16_t) (*(inbuffer + offset)));
       this->topic_id |= ((uint16_t) (*(inbuffer + offset + 1))) << (8 * 1);
       offset += sizeof(this->topic_id);
-      uint32_t length_topic_name = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_topic_name;
+      memcpy(&length_topic_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_topic_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -73,7 +74,8 @@ namespace rosserial_msgs
       inbuffer[offset+length_topic_name-1]=0;
       this->topic_name = (char *)(inbuffer + offset-1);
       offset += length_topic_name;
-      uint32_t length_message_type = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_message_type;
+      memcpy(&length_message_type, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_message_type; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -81,7 +83,8 @@ namespace rosserial_msgs
       inbuffer[offset+length_message_type-1]=0;
       this->message_type = (char *)(inbuffer + offset-1);
       offset += length_message_type;
-      uint32_t length_md5sum = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_md5sum;
+      memcpy(&length_md5sum, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_md5sum; ++k){
           inbuffer[k-1]=inbuffer[k];

@@ -37,11 +37,11 @@ namespace sensor_msgs
       *(outbuffer + offset + 2) = (this->width >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (this->width >> (8 * 3)) & 0xFF;
       offset += sizeof(this->width);
-      uint32_t * length_encoding = (uint32_t *)(outbuffer + offset);
-      *length_encoding = strlen( (const char*) this->encoding);
+      uint32_t length_encoding = strlen( (const char*) this->encoding);
+      memcpy(outbuffer + offset, &length_encoding, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->encoding, *length_encoding);
-      offset += *length_encoding;
+      memcpy(outbuffer + offset, this->encoding, length_encoding);
+      offset += length_encoding;
       *(outbuffer + offset + 0) = (this->is_bigendian >> (8 * 0)) & 0xFF;
       offset += sizeof(this->is_bigendian);
       *(outbuffer + offset + 0) = (this->step >> (8 * 0)) & 0xFF;
@@ -74,7 +74,8 @@ namespace sensor_msgs
       this->width |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
       this->width |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       offset += sizeof(this->width);
-      uint32_t length_encoding = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_encoding;
+      memcpy(&length_encoding, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_encoding; ++k){
           inbuffer[k-1]=inbuffer[k];

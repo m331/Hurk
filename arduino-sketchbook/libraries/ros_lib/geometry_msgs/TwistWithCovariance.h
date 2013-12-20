@@ -22,7 +22,7 @@ namespace geometry_msgs
       offset += this->twist.serialize(outbuffer + offset);
       unsigned char * covariance_val = (unsigned char *) this->covariance;
       for( uint8_t i = 0; i < 36; i++){
-      int32_t * val_covariancei = (long *) &(this->covariance[i]);
+      int32_t * val_covariancei = (int32_t *) &(this->covariance[i]);
       int32_t exp_covariancei = (((*val_covariancei)>>23)&255);
       if(exp_covariancei != 0)
         exp_covariancei += 1023-127;

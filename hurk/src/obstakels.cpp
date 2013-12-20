@@ -33,7 +33,7 @@ void Obstakels::laserCallback(const sensor_msgs::LaserScan::ConstPtr& laser)
 {
 	int length = laser->ranges.size();
 	
-	double maxdis = 2.5; //maximum distance objects are not ignored
+	double maxdis = 2.0; //maximum distance objects are not ignored
 	double miny = -0.42; //min. y-waarde voor het basisplatform in het assenstelsel van de kinect
 	double maxy = 0.42;  //max. y-waarde voor het basisplatform in het assenstelsel van de kinect
 	double stopdis = maxy - miny; //stopdistance

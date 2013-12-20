@@ -19,23 +19,24 @@ static const char SETLOGGERLEVEL[] = "roscpp/SetLoggerLevel";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      uint32_t * length_logger = (uint32_t *)(outbuffer + offset);
-      *length_logger = strlen( (const char*) this->logger);
+      uint32_t length_logger = strlen( (const char*) this->logger);
+      memcpy(outbuffer + offset, &length_logger, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->logger, *length_logger);
-      offset += *length_logger;
-      uint32_t * length_level = (uint32_t *)(outbuffer + offset);
-      *length_level = strlen( (const char*) this->level);
+      memcpy(outbuffer + offset, this->logger, length_logger);
+      offset += length_logger;
+      uint32_t length_level = strlen( (const char*) this->level);
+      memcpy(outbuffer + offset, &length_level, sizeof(uint32_t));
       offset += 4;
-      memcpy(outbuffer + offset, this->level, *length_level);
-      offset += *length_level;
+      memcpy(outbuffer + offset, this->level, length_level);
+      offset += length_level;
       return offset;
     }
 
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t length_logger = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_logger;
+      memcpy(&length_logger, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_logger; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -43,7 +44,8 @@ static const char SETLOGGERLEVEL[] = "roscpp/SetLoggerLevel";
       inbuffer[offset+length_logger-1]=0;
       this->logger = (char *)(inbuffer + offset-1);
       offset += length_logger;
-      uint32_t length_level = *(uint32_t *)(inbuffer + offset);
+      uint32_t length_level;
+      memcpy(&length_level, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_level; ++k){
           inbuffer[k-1]=inbuffer[k];
