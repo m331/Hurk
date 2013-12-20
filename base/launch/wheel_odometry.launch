@@ -1,0 +1,8 @@
+<launch>
+	<node name="wheel_odometry" pkg="base" type="wheel_odometry" output="screen">
+		<param name="motor_port" value="motor_comm"/>
+		<param name="motor_config" value="$(find base)/cfg/wheels.xml"/>
+		<param name="wheel_diameter" value="0.295"/>
+		<param name="wheel_base" value="0.54"/>
+	</node>
+</launch>
