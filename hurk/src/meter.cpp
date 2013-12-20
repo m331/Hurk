@@ -43,10 +43,10 @@ void Meter::distanceCallback(const geometry_msgs::Twist::ConstPtr& distance)
   if(vel.angular.z < -1.0)
 	vel.angular.z = -1.0;
 
-  if(vel.linear.x < 0.01 && vel.linear.x > -0.01)
+  if(vel.linear.x < 0.02 && vel.linear.x > -0.02)
 	vel.linear.x = 0.0;
 
-  if(vel.angular.z < 0.01 && vel.angular.z > -0.01)
+  if(vel.angular.z < 0.05 && vel.angular.z > -0.05)
 	vel.angular.z = 0.0
 
   ROS_INFO("x: %f z: %f", vel.linear.x, vel.angular.z);
