@@ -1,4 +1,6 @@
 <launch>
+  <include file="$(find base)/launch/test_base.launch" />
+	
   <node name="ps3joy" pkg="ps3joy" type="ps3joy.py" output="screen" respawn="true" args="--continuous-output" />
   
   <node pkg="joy" type="joy_node" name="ps3_joy" output="screen" >
@@ -10,8 +12,4 @@
     <!-- Load the file you made above -->
     <rosparam command="load" file="$(find ps3joy)/diagnostics.yaml" />
   </node>
-  
-	<include file="$(find base)/launch/test_base.launch">
-
-
 </launch>
