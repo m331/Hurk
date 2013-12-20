@@ -32,11 +32,12 @@ Obstakels::Obstakels()
 void Obstakels::laserCallback(const sensor_msgs::LaserScan::ConstPtr& laser)
 {
 	int length = laser->ranges.size();
-	
+	bool robotisfree = true;
 	double maxdis = 2.0; //maximum distance objects are not ignored
-	double miny = -0.42; //min. y-waarde voor het basisplatform in het assenstelsel van de kinect
-	double maxy = 0.42;  //max. y-waarde voor het basisplatform in het assenstelsel van de kinect
+	double miny = -0.45; //min. y-waarde voor het basisplatform in het assenstelsel van de kinect
+	double maxy = 0.45;  //max. y-waarde voor het basisplatform in het assenstelsel van de kinect
 	double stopdis = maxy - miny; //stopdistance
+	double freedis = stopdis + 15;
 	
 	
 	double xy[length][2];
@@ -70,28 +71,31 @@ void Obstakels::laserCallback(const sensor_msgs::LaserScan::ConstPtr& laser)
 	
   geometry_msgs::Twist vel;
   
-  if (objr < stopdis) {
-	//er is een object te dichtbij, dus we gaan stilstaan en draaien totdat we weer kunnen rijden
-	if (vel.angular.z != 0.3 && vel.angular.z != -0.3) {
+	if (objr < stopdis)
+		robotisfree = false;
+	if (robotisfree) {
 		if (objth < 0) {
-			vel.angular.z = 0.3;
+			vel.angular.z = 0.5;
 		} else {
-			vel.angular.z = -0.3;
+			vel.angular.z = -0.5;
+		}
+		if (objr > 0.5 * maxdis) {
+			vel.angular.z += 0.5 * objth;
+		}
+		vel.linear.x = 0.4;
+	} else {
+		if (objr > freedis)
+			robotisfree = true;
+		vel.linear.x = 0.0;
+		//er is een object te dichtbij, dus we gaan stilstaan en draaien totdat we weer kunnen rijden
+		if (vel.angular.z != 0.3 && vel.angular.z != -0.3) {
+			if (objth < 0) {
+				vel.angular.z = 0.3;
+			} else {
+				vel.angular.z = -0.3;
+			}
 		}
 	}
-
-	vel.linear.x = 0.0;
-  } else {
-	if (objth < 0) {
-		vel.angular.z = 0.5;
-	} else {
-		vel.angular.z = -0.5;
-	}
-	if (objr > 0.5 * maxdis) {
-		vel.angular.z += 0.5 * objth;
-	}
-	vel.linear.x = 0.4;
-  }
 
   ROS_INFO("x: %f z: %f", vel.linear.x, vel.angular.z);
   vel_pub_.publish(vel);
