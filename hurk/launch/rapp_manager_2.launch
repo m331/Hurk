@@ -1,0 +1,9 @@
+<launch>
+  <arg name="robot_name" default="HURK"/>
+  <arg name="rapp_lists" default="rocon_apps/rocon.rapps;hurk/hurk.rapps"/>
+
+  <include file="$(find rocon_app_manager)/launch/paired_public.launch">
+    <arg name="robot_name"  value="$(arg robot_name)"/>
+  </include>
+
+</launch>

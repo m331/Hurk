@@ -1,0 +1,4 @@
+<launch>
+  <!-- NOTE: it might be necessary to change args="/dev/ttyACM0" to the port to which your Arduino is connected on your pc -->
+  <node name="serial_node" type="serial_node.py" pkg="rosserial_python" args="/dev/ttyACM0" />
+</launch> 

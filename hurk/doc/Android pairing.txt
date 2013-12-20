@@ -1,0 +1,14 @@
+Test pairing with Android:
+
+Use $ ifconfig to determine IP.
+
+Run $ echo export ROS_MASTER_URI=http://IP_OF_TURTLEBOT:11311 >> ~/.bashrc
+Run $ echo export ROS_HOSTNAME=IP_OF_TURTLEBOT >> ~/.bashrc
+
+Edit opt/ros/hydro/?/rocon_app_manager/paired_private to include the hurk/hurk.rapps list:
+<arg name="rapp_lists" default="rocon_apps/rocon.rapps;hurk/hurk.rapps"/>
+
+Run $ rocon_launch rocon_app_manager paired.concert --no-terminals
+
+
+On Android open Remocon, scan network, find robot.
