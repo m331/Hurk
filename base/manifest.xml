@@ -9,6 +9,10 @@
   <depend package="roscpp"/>
   <depend package="threemxl"/>
   <depend package="ps3joy" />
+  <depend package="sensor_msgs"/>
+  <depend package="nav_msgs"/>
+  <depend package="tf"/>
+   <depend package="arduino"/>
 </package>
 
 
