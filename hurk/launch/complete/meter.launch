@@ -1,0 +1,14 @@
+<launch>
+	<include file="$(find base)/launch/base.launch"/>
+
+	<include file="$(find openni_launch)/launch/openni.launch">
+		<arg name="depth_registration" default="true" />
+	</include>
+
+	<node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
+		<remap from="image" to="/camera/depth_registered/image_raw"/>
+	</node>
+
+	<node pkg="hurk" type="meter" name="meter" />
+	
+</launch>
