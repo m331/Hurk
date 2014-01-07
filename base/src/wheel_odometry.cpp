@@ -117,6 +117,7 @@ void WheelOdometry::publishOdometry()
 	    odom_pub_.publish(odom);
 
 	    last_time_ = current_time_;
+	    ros::spinOnce();
 	}
 }
 
