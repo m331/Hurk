@@ -22,7 +22,7 @@ private:
 PS3Conv::PS3Conv():
   linear_(3),
   angular_(0),
-  a_scale_(0.7),
+  a_scale_(0.6),
   l_scale_(0.6)
 {
   vel_pub_ = nh_.advertise<geometry_msgs::Twist>("base/cmd_vel", 1);

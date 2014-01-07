@@ -7,5 +7,7 @@
 	<node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
 		<remap from="image" to="/camera/depth_registered/image_raw"/>
 	</node>
+
+	<node pkg="tf" type="static_transform_publisher" name="base_to_camera_broadcaster" args="0.0 0 0.0 0 0.0 0 base_link camera_link 200" />
 	
 </launch>
