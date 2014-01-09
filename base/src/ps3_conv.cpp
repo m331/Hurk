@@ -22,8 +22,8 @@ private:
 PS3Conv::PS3Conv():
   linear_(3),
   angular_(0),
-  a_scale_(0.6),
-  l_scale_(0.6)
+  a_scale_(0.7),
+  l_scale_(0.7)
 {
   vel_pub_ = nh_.advertise<geometry_msgs::Twist>("base/cmd_vel", 1);
   joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &PS3Conv::joyCallback, this);
