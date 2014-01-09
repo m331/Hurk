@@ -1,15 +1,17 @@
 <launch>
   <!-- Run the map server -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find hurk)/cfg/map.pgm 0.05"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find hurk)/cfg/smallmap.pgm 0.05"/>
 
   <!--- Run AMCL -->
   <include file="$(find hurk)/launch/navigation/amcl_diff.launch" />
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <remap from="cmd_vel" to="base/cmd_vel"/>
     <rosparam file="$(find hurk)/cfg/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find hurk)/cfg/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find hurk)/cfg/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find hurk)/cfg/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find hurk)/cfg/base_local_planner_params.yaml" command="load" />
+
   </node>
 </launch>
