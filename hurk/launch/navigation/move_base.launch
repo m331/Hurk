@@ -12,6 +12,7 @@
     <rosparam file="$(find hurk)/cfg/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find hurk)/cfg/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find hurk)/cfg/base_local_planner_params.yaml" command="load" />
+    <param name="controller_frequency" value="5.0" />
 
   </node>
 </launch>
