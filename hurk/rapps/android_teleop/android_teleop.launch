@@ -1,32 +1,43 @@
+<!-- This file requires the rocon_app_manager to be started and paired with Android. It is launched when launching the app. TODO: launch kinect node and remap if needed. Maybe even do something with image stream. -->
 <launch>
-
-
-
-
-  <!--  TURTLEBOT CODE:
-    Right now, the android app is hard coded to look for /cmd_vel as the input
-    topic.
-   
-  <node pkg="nodelet" type="nodelet" name="teleop_velocity_smoother" args="load yocs_velocity_smoother/VelocitySmootherNodelet /mobile_base_nodelet_manager">
-    <rosparam file="$(find turtlebot_bringup)/param/defaults/smoother.yaml" command="load"/>
-    <remap from="teleop_velocity_smoother/raw_cmd_vel" to="android/virtual_joystick/cmd_vel"/>
-    <remap from="teleop_velocity_smoother/smooth_cmd_vel" to="/cmd_vel_mux/input/teleop"/>
-
-    <!-- Robot velocity feedbacks; use the one configured as base default 
-    <remap from="teleop_velocity_smoother/odometry" to="/odom"/>
-    <remap from="teleop_velocity_smoother/robot_cmd_vel" to="/mobile_base/commands/velocity"/>
+  <!--include file="$(find base)/launch/test_base.launch" >  
+  </include-->
+<!--
+  <node name="base" pkg="base" type="base" output="screen" respawn="false">
+    <remap from="base/cmd_vel" to="android/virtual_joystick/cmd_vel"/>-->
+    <!-- launch-prefix="gdb -ex run - -args" -->
+<!--
+    <param name="motor_port" value="motor_comm"/>
+    <param name="motor_config" value="$(find base)/cfg/wheels.xml"/>
+    <param name="wheel_diameter" value="0.295"/>
+    <param name="wheel_base" value="0.54"/>
   </node>
 
+  <node name="motor_comm" pkg="shared_serial" type="server" output="screen">
+    <param name="port_name" value="/dev/ttyUSB0"/>
+    <param name="port_type" value="RS485_FTDI"/>
+    <param name="baud_rate" value="921600"/>
+  </node>-->
+
+
+
+
+  <!-- Set parameter for jpeg quality. Don't know what it's used in. Probably by the openni.launch rgb_processing chain. -->
   <param name="camera/rgb/image_color/compressed/jpeg_quality" value="22"/>
 
-  <include file="$(find turtlebot_bringup)/launch/3dsensor.launch">
-    <arg name="rgb_processing" value="true" />
-    <arg name="depth_registration" value="false" />
-    <arg name="depth_processing" value="false" />
+  <include file="$(find openni_launch)/launch/openni.launch">
+    <arg name="rgb_processing"                  value="true"/>
+    <arg name="ir_processing"                   value="false"/>
+    <arg name="depth_processing"                value="false"/>
+    <arg name="depth_registered_processing"     value="false"/>
+    <arg name="disparity_processing"            value="false"/>
+    <arg name="disparity_registered_processing" value="false"/>
+    <arg name="hw_registered_processing"        value="false" />
+    <arg name="sw_registered_processing"        value="false" />
   </include>
 
-  <!-- Make a slower camera feed available. 
+  <!-- Limit camera feed to 5Hz -->
   <node pkg="topic_tools" type="throttle" name="camera_throttle" output="screen"
         args="messages camera/rgb/image_color/compressed 5"/>
--->
+
 </launch>

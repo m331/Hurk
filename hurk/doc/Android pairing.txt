@@ -12,3 +12,9 @@ Run $ rocon_launch rocon_app_manager paired.concert --no-terminals
 
 
 On Android open Remocon, scan network, find robot.
+
+
+******** COPYPASTA REGION *********
+echo export ROS_MASTER_URI=http://145.94.198.216:11311 >> ~/.bashrc
+echo export ROS_HOSTNAME=145.94.198.216 >> ~/.bashrc
+source ~/.bashrc

@@ -1,6 +1,6 @@
 display:      Teleop
 description:  Drive a turtlebot from Android with a touch joystick and video feed.
-platform:     linux.ros.cybernetic_pirate
+platform:     linux.ros.*
 launch:       hurk/android_teleop.launch
 interface:    hurk/android_teleop.interface
 icon:         hurk/android_teleop_hurk_icon.png
