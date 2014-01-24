@@ -1,0 +1,5 @@
+# Sets the gripper to the required height in the base link frame
+float64 height
+float64 time_limit
+---
+bool reached

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/dbl-ros-pkg/!svn/ver/1412/trunk/robots/jolt/jolt_arm/msg
+END
+Jolt4DOF.msg
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/dbl-ros-pkg/!svn/ver/1372/trunk/robots/jolt/jolt_arm/msg/Jolt4DOF.msg
+END
+JoltArmStatus.msg
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/dbl-ros-pkg/!svn/ver/1346/trunk/robots/jolt/jolt_arm/msg/JoltArmStatus.msg
+END
+JoltJoint.msg
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/dbl-ros-pkg/!svn/ver/1412/trunk/robots/jolt/jolt_arm/msg/JoltJoint.msg
+END

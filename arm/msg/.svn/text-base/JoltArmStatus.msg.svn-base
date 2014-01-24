@@ -1,0 +1,4 @@
+jolt_common/MotorStatus shoulder
+jolt_common/MotorStatus elbow
+jolt_common/MotorStatus wrist_roll
+jolt_common/MotorStatus wrist_pitch

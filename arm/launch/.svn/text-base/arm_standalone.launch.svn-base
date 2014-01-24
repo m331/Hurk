@@ -1,0 +1,4 @@
+<launch>
+	<include file="$(find jolt_common)/launch/comm.launch"/>
+	<include file="$(find jolt_arm)/launch/arm.launch"/>
+</launch>
