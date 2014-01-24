@@ -1,0 +1,6 @@
+<launch>
+	<node name="jolt_arm" pkg="jolt_arm" type="jolt_arm" output="screen" respawn="true">
+		<param name="motor_port" value="motor_comm"/>
+		<param name="motor_config" value="$(find jolt_arm)/cfg/arm.xml"/>
+	</node>
+</launch>

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/dbl-ros-pkg/!svn/ver/1369/trunk/robots/jolt/jolt_arm/launch
+END
+arm.launch
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/dbl-ros-pkg/!svn/ver/1369/trunk/robots/jolt/jolt_arm/launch/arm.launch
+END
+arm_standalone.launch
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/dbl-ros-pkg/!svn/ver/1346/trunk/robots/jolt/jolt_arm/launch/arm_standalone.launch
+END

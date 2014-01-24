@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/dbl-ros-pkg/!svn/ver/1664/trunk/robots/jolt/jolt_arm/srv
+END
+SetHeight.srv
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/dbl-ros-pkg/!svn/ver/1664/trunk/robots/jolt/jolt_arm/srv/SetHeight.srv
+END
+PredefPos.srv
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/dbl-ros-pkg/!svn/ver/1664/trunk/robots/jolt/jolt_arm/srv/PredefPos.srv
+END

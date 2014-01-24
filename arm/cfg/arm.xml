@@ -1,0 +1,52 @@
+<configuration>
+  <shoulder>
+    <ID>108</ID>
+    <mxlmode comment="POSITION_MODE">0</mxlmode>
+    <anglelowerlimit>-2.5</anglelowerlimit>
+    <angleupperlimit>1.1</angleupperlimit>
+    <gearboxratiomotor>363.36</gearboxratiomotor>   
+    <acceleration>0.7</acceleration>
+    <pspeed>0.4</pspeed>
+    <ispeed>0.1</ispeed>
+    <dspeed>0.5</dspeed>
+    <ilspeed>5.0</ilspeed>
+    <pposition>0.4</pposition>
+    <iposition>0.1</iposition>
+    <dposition>0.5</dposition>
+    <ilposition>5.0</ilposition>
+  </shoulder>
+  <elbow>
+    <ID>109</ID>
+    <mxlmode comment="POSITION_MODE">0</mxlmode>
+    <anglelowerlimit>-3.0</anglelowerlimit>
+    <angleupperlimit>3.0</angleupperlimit>
+  	<acceleration>0.7</acceleration>
+    <pspeed>0.4</pspeed>
+    <ispeed>0.1</ispeed>
+    <dspeed>0.5</dspeed>
+    <ilspeed>5.0</ilspeed>
+    <pposition>0.4</pposition>
+    <iposition>0.1</iposition>
+    <dposition>0.5</dposition>
+    <ilposition>5.0</ilposition>
+    <gearboxratiomotor>367.36</gearboxratiomotor>   
+    <offsetmotor>-1.31</offsetmotor>
+  </elbow>
+  <wrist_roll>
+    <ID>110</ID>
+    <mxlmode comment="POSITION_MODE">0</mxlmode>
+    <acceleration>10</acceleration> 
+    <offsetmotor>-3.14</offsetmotor>
+    <anglelowerlimit>-3</anglelowerlimit>
+    <angleupperlimit>1.57</angleupperlimit>
+  </wrist_roll>
+  <wrist_pitch>
+    <ID>115</ID>
+    <mxlmode comment="POSITION_MODE">0</mxlmode>
+    <anglelowerlimit>-1.6</anglelowerlimit>
+    <angleupperlimit>1.6</angleupperlimit>
+    <acceleration>2</acceleration>
+    <!--offsetmotor>0.48</offsetmotor-->
+    <offsetmotor>0.575</offsetmotor>
+  </wrist_pitch>
+</configuration>

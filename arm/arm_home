@@ -1,0 +1,17 @@
+#!/bin/sh
+rostopic pub /jolt_arm/cmd_pos jolt_arm/Jolt4DOF "shoulder:
+  position: 0.0
+  speed: 0.5
+  acceleration: 0.5
+elbow:
+  position: 0.0
+  speed: 0.5
+  acceleration: 0.5
+wrist_roll:
+  position: 0.0
+  speed: 0.5
+  acceleration: 0.5
+wrist_pitch:
+  position: 0.0
+  speed: 0.5
+  acceleration: 0.5"

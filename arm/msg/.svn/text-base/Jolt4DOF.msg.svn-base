@@ -1,0 +1,4 @@
+jolt_arm/JoltJoint shoulder
+jolt_arm/JoltJoint elbow
+jolt_arm/JoltJoint wrist_roll
+jolt_arm/JoltJoint wrist_pitch

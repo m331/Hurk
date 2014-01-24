@@ -1,0 +1,5 @@
+#Service Call to set the arm to required position. Gives true after the position is reached
+int8 predef_pos
+float64 time
+---
+bool status
